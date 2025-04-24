@@ -50,16 +50,14 @@ public class StudentServiceImpl implements IStudentService {
         List<ErrorMessage> errorMessages = studentValidator.validateCreateOrUpdateStudent(
                 createStudentRequest.getEmail(),
                 createStudentRequest.getSchoolNumber(),
-                "",  // Yeni öğrenci için mevcut değerler boş olacak
-                ""   // Yeni öğrenci için mevcut değerler boş olacak
+                "",
+                ""
         );
 
-        // Hatalar varsa, hepsini döndür
         if (!errorMessages.isEmpty()) {
             throw new BaseException(errorMessages);
         }
 
-        // Öğrenciyi kaydet
         Student student = studentMapper.toEntity(createStudentRequest);
         Student saved = studentRepository.save(student);
         return studentMapper.toGetByIdResponse(saved);
@@ -67,45 +65,37 @@ public class StudentServiceImpl implements IStudentService {
 
     @Override
     public GetByIdStudentResponse update(Long id, UpdateStudentRequest updateStudentRequest) {
-        // Öğrenci mevcut mu?
         Student existing = studentRepository.findById(id)
                 .orElseThrow(() -> new BaseException(
                         new ErrorMessage(MessageType.NO_RECORD_EXIST)));
 
-        // E-posta ve okul numarasını kontrol et
         List<ErrorMessage> errorMessages = studentValidator.validateCreateOrUpdateStudent(
                 updateStudentRequest.getEmail(),
                 updateStudentRequest.getSchoolNumber(),
-                existing.getEmail(),    // Mevcut e-posta
-                existing.getSchoolNumber() // Mevcut okul numarası
+                existing.getEmail(),
+                existing.getSchoolNumber()
         );
 
-        // Hatalar varsa, hepsini döndür
         if (!errorMessages.isEmpty()) {
             throw new BaseException(errorMessages);
         }
 
-        // Öğrenciyi güncelle
         studentMapper.updateStudentFromRequest(updateStudentRequest, existing);
 
-        // Güncellenmiş öğrenciyi kaydet
         Student updated = studentRepository.save(existing);
         return studentMapper.toGetByIdResponse(updated);
     }
 
     @Override
     public void delete(Long id) {
-        // Öğrencinin var olup olmadığını kontrol et
         if (!studentRepository.existsById(id)) {
             throw new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST));
         }
 
-        // Öğrencinin kayıtlı olduğu dersleri kontrol et
         if (registrationRepository.existsByStudentId(id)) {
             throw new BaseException(new ErrorMessage(MessageType.REGISTRATION_EXISTS));
         }
 
-        // Öğrenciye ait kayıtları sil
         studentRepository.deleteById(id);
     }
 

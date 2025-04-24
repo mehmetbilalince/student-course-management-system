@@ -20,14 +20,14 @@ public interface RegistrationMapper {
     @Mapping(target = "courseId", source = "course.id")
     @Mapping(target = "studentName", source = "student.name")
     @Mapping(target = "courseName", source = "course.courseName")
-    @Mapping(target = "formattedRegistrationDate", source = "registrationDate") // Date field formatlama
+    @Mapping(target = "formattedRegistrationDate", source = "registrationDate")
     GetAllRegistrationResponse toGetAllResponse(Registration registration);
 
     @Mapping(target = "studentId", source = "student.id")
     @Mapping(target = "courseId", source = "course.id")
     @Mapping(target = "studentName", source = "student.name")
     @Mapping(target = "courseName", source = "course.courseName")
-    @Mapping(target = "formattedRegistrationDate", source = "registrationDate") // Date field formatlama
+    @Mapping(target = "formattedRegistrationDate", source = "registrationDate")
     GetByIdRegistrationResponse toGetByIdResponse(Registration registration);
 
     void updateRegistrationFromRequest(UpdateRegistrationRequest request, @MappingTarget Registration registration);

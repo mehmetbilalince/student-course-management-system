@@ -9,13 +9,10 @@ import java.util.List;
 @Repository
 public interface RegistrationRepository extends JpaRepository<Registration, Long> {
 
-    // Öğrencinin bir derse daha önce kayıt olup olmadığını kontrol eder
     boolean existsByStudentIdAndCourseId(Long studentId, Long courseId);
 
-    // Öğrencinin toplamda kaç ders kaydı olduğunu sayar
     long countByStudentId(Long studentId);
 
-    // Öğrencinin kaydının bulunduğu herhangi bir derse ait kayıt var mı kontrol eder
     boolean existsByStudentId(Long studentId);
 
     boolean existsByCourseId(Long courseId);

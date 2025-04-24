@@ -34,7 +34,7 @@ public class CourseControllerImpl implements ICourseController {
 
     @Override
     public ResponseEntity<GetByIdCourseResponse> updateCourse(Long id, UpdateCourseRequest updateCourseRequest) {
-        return ResponseEntity.ok(courseService.update(id, updateCourseRequest)); // ID'yi URL'den alıyoruz.
+        return ResponseEntity.ok(courseService.update(id, updateCourseRequest));
     }
 
     @Override

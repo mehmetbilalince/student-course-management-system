@@ -11,7 +11,6 @@ public class GenericMapperManager {
 
     private final Map<Class<?>, Object> mapperMap = new HashMap<>();
 
-    // List<Object> alacak şekilde constructor'ı güncelliyoruz
     public GenericMapperManager(List<Object> mappers) {
         for (Object mapper : mappers) {
             Class<?>[] interfaces = mapper.getClass().getInterfaces();

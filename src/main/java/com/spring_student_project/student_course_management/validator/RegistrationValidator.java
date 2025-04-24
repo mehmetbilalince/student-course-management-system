@@ -13,14 +13,12 @@ public class RegistrationValidator {
 
     private final RegistrationRepository registrationRepository;
 
-    // Aynı öğrenci aynı derse kayıt olamaz
     public void validateDuplicateRegistration(Long studentId, Long courseId) {
         if (registrationRepository.existsByStudentIdAndCourseId(studentId, courseId)) {
             throw new BaseException(new ErrorMessage(MessageType.DUPLICATE_REGISTRATION));
         }
     }
 
-    // Öğrenci en fazla 6 derse kayıt olabilir
     public void validateMaxCourses(Long studentId) {
         long count = registrationRepository.countByStudentId(studentId);
         if (count >= 6) {
@@ -28,7 +26,6 @@ public class RegistrationValidator {
         }
     }
 
-    // Kayıt eklemeden önce tüm doğrulamaları yapar
     public void validateRegistration(Long studentId, Long courseId) {
         validateDuplicateRegistration(studentId, courseId);
         validateMaxCourses(studentId);

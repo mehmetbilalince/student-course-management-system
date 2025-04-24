@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 public class GetAllRegistrationResponse {
     private Long id;
     private Long studentId;
-    private String studentName;  // Öğrenci adı
+    private String studentName;
     private Long courseId;
-    private String courseName;   // Ders adı
-    private String formattedRegistrationDate;  // Formatlı tarih (String türünde)
+    private String courseName;
+    private String formattedRegistrationDate;
 }

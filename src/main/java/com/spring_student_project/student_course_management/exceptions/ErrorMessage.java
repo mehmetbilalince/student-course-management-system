@@ -11,7 +11,6 @@ public class ErrorMessage {
     private final String code;
     private final String message;
 
-    // MessageType ile ErrorMessage oluştur
     public ErrorMessage(MessageType messageType) {
         this.code = messageType.getCode();
         this.message = messageType.getMessage();

@@ -46,10 +46,8 @@ public class CourseServiceImpl implements ICourseService {
 
     @Override
     public GetByIdCourseResponse add(CreateCourseRequest createCourseRequest) {
-        // Ders kodunun eşsizliğini kontrol et
         courseValidator.validateCourseCode(createCourseRequest.getCourseCode());
 
-        // Kaydet
         Course course = courseMapper.toEntity(createCourseRequest);
         Course saved = courseRepository.save(course);
         return courseMapper.toGetByIdResponse(saved);
@@ -57,17 +55,14 @@ public class CourseServiceImpl implements ICourseService {
 
     @Override
     public GetByIdCourseResponse update(Long id, UpdateCourseRequest updateCourseRequest) {
-        // Mevcut dersi getir
         Course existing = courseRepository.findById(id)
                 .orElseThrow(() -> new BaseException(
                         new ErrorMessage(MessageType.NO_RECORD_EXIST)));
 
-        // Eğer ders kodu değişmişse, çakışma kontrolü yap
         if (!existing.getCourseCode().equals(updateCourseRequest.getCourseCode())) {
             courseValidator.validateCourseCode(updateCourseRequest.getCourseCode());
         }
 
-        // Güncelleme işlemi
         courseMapper.updateCourseFromRequest(updateCourseRequest, existing);
         Course updated = courseRepository.save(existing);
         return courseMapper.toGetByIdResponse(updated);
@@ -76,16 +71,13 @@ public class CourseServiceImpl implements ICourseService {
 
     @Override
     public void delete(Long id) {
-        // Kursun var olup olmadığını kontrol et
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST)));
 
-        // Kursa kayıtlı öğrencileri kontrol et
         if (registrationRepository.existsByCourseId(id)) {
             throw new BaseException(new ErrorMessage(MessageType.COURSE_HAS_STUDENTS));
         }
 
-        // Kursu sil
         courseRepository.deleteById(id);
     }
 

@@ -34,7 +34,7 @@ public class StudentControllerImpl implements IStudentController {
 
     @Override
     public ResponseEntity<GetByIdStudentResponse> updateStudent(Long id, UpdateStudentRequest updateStudentRequest) {
-        return ResponseEntity.ok(studentService.update(id, updateStudentRequest)); // ID'yi URL'den alıyoruz.
+        return ResponseEntity.ok(studentService.update(id, updateStudentRequest));
     }
 
     @Override

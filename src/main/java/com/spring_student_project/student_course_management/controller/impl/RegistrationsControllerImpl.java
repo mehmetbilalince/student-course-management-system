@@ -34,7 +34,7 @@ public class RegistrationsControllerImpl implements IRegistrationController {
 
     @Override
     public ResponseEntity<GetByIdRegistrationResponse> updateRegistration(Long id, UpdateRegistrationRequest updateRegistrationRequest) {
-        return ResponseEntity.ok(registrationService.update(id, updateRegistrationRequest)); // ID'yi URL'den alıyoruz.
+        return ResponseEntity.ok(registrationService.update(id, updateRegistrationRequest));
     }
 
     @Override

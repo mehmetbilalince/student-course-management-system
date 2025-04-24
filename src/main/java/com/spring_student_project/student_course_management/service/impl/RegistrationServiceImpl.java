@@ -34,9 +34,7 @@ public class RegistrationServiceImpl implements IRegistrationService {
     private final RegistrationMapper registrationMapper;
     private final RegistrationValidator registrationValidator;
 
-    /**
-     * Tüm kayıtları getirir
-     */
+
     @Override
     public List<GetAllRegistrationResponse> getAll() {
         List<Registration> registrations = registrationRepository.findAll();
@@ -48,59 +46,46 @@ public class RegistrationServiceImpl implements IRegistrationService {
                     response.setStudentName(registration.getStudent().getName());
                     response.setCourseName(registration.getCourse().getCourseName());
 
-                    // Sadece formatlı tarihi ayarla
                     response.setFormattedRegistrationDate(formatDate(registration.getRegistrationDate()));
                     return response;
                 })
                 .collect(Collectors.toList());
     }
 
-    /**
-     * ID'ye göre kayıt getirir
-     */
     @Override
     public GetByIdRegistrationResponse getById(long id) {
         Registration registration = registrationRepository.findById(id)
                 .orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST)));
 
         GetByIdRegistrationResponse response = registrationMapper.toGetByIdResponse(registration);
-        // Sadece formatlı tarihi ayarla
         response.setFormattedRegistrationDate(formatDate(registration.getRegistrationDate()));
         return response;
     }
 
-    /**
-     * Yeni bir kayıt ekler
-     */
     @Override
     public GetByIdRegistrationResponse add(CreateRegistrationRequest request) {
-        // Student ve Course kontrolü
         Student student = studentRepository.findById(request.getStudentId())
                 .orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST)));
         Course course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST)));
 
-        // Öğrencinin zaten bu derse kaydolup kaydolmadığını kontrol et
         if (registrationRepository.existsByStudentIdAndCourseId(request.getStudentId(), request.getCourseId())) {
             throw new BaseException(new ErrorMessage(MessageType.REGISTRATION_ALREADY_EXISTS));
         }
 
-        // Öğrencinin daha fazla derse kayıt olamaması için toplam kayıt sayısını kontrol et
         if (registrationRepository.countByStudentId(request.getStudentId()) >= 6) {
             throw new BaseException(new ErrorMessage(MessageType.MAX_COURSE_LIMIT_REACHED));
         }
 
-        // Yeni kayıt oluşturuluyor
         Registration registration = Registration.builder()
                 .student(student)
                 .course(course)
-                .registrationDate(LocalDateTime.now()) // Otomatik tarih
+                .registrationDate(LocalDateTime.now())
                 .build();
 
-        Registration saved = registrationRepository.save(registration); // Veritabanına kayıt
+        Registration saved = registrationRepository.save(registration);
         GetByIdRegistrationResponse response = registrationMapper.toGetByIdResponse(saved);
 
-        // Sadece formatlı tarihi ayarla
         response.setFormattedRegistrationDate(formatDate(saved.getRegistrationDate()));
         return response;
     }
@@ -110,32 +95,25 @@ public class RegistrationServiceImpl implements IRegistrationService {
      */
     @Override
     public GetByIdRegistrationResponse update(Long id, UpdateRegistrationRequest request) {
-        // Mevcut kayıt kontrolü
         Registration existing = registrationRepository.findById(id)
                 .orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST)));
 
-        // Student ve Course kontrolü
         Student student = studentRepository.findById(request.getStudentId())
                 .orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST)));
         Course course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new BaseException(new ErrorMessage(MessageType.NO_RECORD_EXIST)));
 
-        // Güncellemeleri yap
         existing.setStudent(student);
         existing.setCourse(course);
-        existing.setRegistrationDate(LocalDateTime.parse(request.getRegistrationDate())); // Dışarıdan gelen tarih set edilir
+        existing.setRegistrationDate(LocalDateTime.parse(request.getRegistrationDate()));
 
-        Registration updated = registrationRepository.save(existing); // Güncellenmiş hali kaydedilir
+        Registration updated = registrationRepository.save(existing);
         GetByIdRegistrationResponse response = registrationMapper.toGetByIdResponse(updated);
 
-        // Sadece formatlı tarihi ayarla
         response.setFormattedRegistrationDate(formatDate(updated.getRegistrationDate()));
         return response;
     }
 
-    /**
-     * Kaydı siler
-     */
     @Override
     public void delete(Long id) {
         if (!registrationRepository.existsById(id)) {
@@ -144,14 +122,11 @@ public class RegistrationServiceImpl implements IRegistrationService {
         registrationRepository.deleteById(id);
     }
 
-    /**
-     * Tarihi formatlamak için yardımcı metod
-     */
     private String formatDate(LocalDateTime date) {
         if (date == null) {
             return null;
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return date.format(formatter); // Formatı istediğiniz gibi değiştirebilirsiniz
+        return date.format(formatter);
     }
 }
